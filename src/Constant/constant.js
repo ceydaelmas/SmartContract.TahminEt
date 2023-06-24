@@ -1,4 +1,4 @@
-  const contractAddress = "0x25c224DcE1a5b4b82E1Bf1541Dd65BA80C5206d3";
+  const contractAddress = "0x3E34Cd7f30A96722F8721672E91a5d1A61085cC4";
 
   const contractAbi =[
     {
@@ -175,7 +175,7 @@
     }
   ];
 
-  const contractAddress2 = "0xf2a0b399Dcdf1961341411B5d712561A042E9D09"
+  const contractAddress2 = "0xDab7377C310eACB1A53640faA05fC2be64F3f69f"
   const contract2Abi =  [
     {
       "inputs": [

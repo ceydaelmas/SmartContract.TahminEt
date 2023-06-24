@@ -19,6 +19,7 @@ function App() {
   const [stocks, setStocks] = useState([]);
   const [number, setNumber] = useState('');
   const[buyShares,setBuyShares] = useState('');
+  const[title,setTitle] = useState('Dünya kupasını kim kazanır?');
   const [selectedContract, setSelectedContract] = useState(1); // 1 for first contract, 2 for second contract
 
   const currentAbi = selectedContract === 1 ? contractAbi : contract2Abi;
@@ -47,16 +48,15 @@ function App() {
   }
 
 
-  async function vote() {
+  async function buyStock() {
     if(number === '' || buyShares === ''){
-      alert('Please enter both candidate index and number of votes');
+      alert('Please enter both stock index and number of stocks');
       return;
     }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
     const contractInstance = await connectToContract();
-    // Here we send the vote transaction with the number of votes as parameter.
     const tx = await contractInstance.buyShares(number, buyShares);
     await tx.wait();
   }
@@ -69,7 +69,7 @@ function App() {
       return {
         index: index,
         name: stock.name,
-        voteCount: stock.shareCount.toNumber()
+        stockCount: stock.shareCount.toNumber()
       }
     });
     setStocks(formattedStocks);
@@ -120,6 +120,11 @@ function App() {
 
   function selectContract(contractNumber) {
     setSelectedContract(contractNumber);
+    if (contractNumber === 1) {
+      setTitle("Dünya kupasını kim kazanır?");
+    } else if (contractNumber === 2) {
+      setTitle("2023'te Eurovision kim kazanır?");
+    }
   }
   async function handleBuySharesChange(e){
     setBuyShares(e.target.value);
@@ -127,18 +132,20 @@ function App() {
 
   return (
     <div className="App">
+      {marketStatus && isConnected && (
       <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">Voting App</Navbar.Brand>
+          <Navbar.Brand href="#home">Tahmin Et</Navbar.Brand>
           <Navbar.Toggle aria-controls="navbar" />
           <Navbar.Collapse id="navbar">
             <Nav className="mr-auto">
-              <Nav.Link onClick={() => selectContract(1)}>First Voting</Nav.Link>
-              <Nav.Link onClick={() => selectContract(2)}>Second Voting</Nav.Link>
+              <Nav.Link onClick={() => selectContract(1)}>Market 1</Nav.Link>
+              <Nav.Link onClick={() => selectContract(2)}>Market 2</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
+    )}
 
       {marketStatus ? (
         isConnected ? (
@@ -150,7 +157,8 @@ function App() {
             buyShares={buyShares}
             handleNumberChange={handleNumberChange}
             handleBuySharesChange={handleBuySharesChange}
-            buySharesFunction={vote}
+            buySharesFunction={buyStock}
+            title={title}
           />
         ) : (
           <Login connectWallet={connectToMetamask} />
